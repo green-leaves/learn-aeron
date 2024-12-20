@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: fix-acceptor
+quickfixj:
+  server:
+    enabled: true
+    config: classpath:quickfixj-server.cfg
+    auto-startup: true
+    force-disconnect: false
+    phase: 0
+    jmx-enabled: true
+    concurrent:
+      enabled: true
+      useDefaultExecutorFactory: true
+      queueCapacity: 1000
+      corePoolSize: 8
+      maxPoolSize: 1000
+      allowCoreThreadTimeOut: true
+      keepAliveSeconds: 60
+      waitForTasksToCompleteOnShutdown: false
+      awaitTerminationMillis: 0
+      threadNamePrefix: "QuickFixJ Spring Boot Starter thread-"
+    message-store-factory: memory
+    log-factory: screen

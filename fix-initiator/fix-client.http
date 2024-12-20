@@ -1,0 +1,1 @@
+GET localhost:8080/client/send?message=FromQuickFixJ_Client
