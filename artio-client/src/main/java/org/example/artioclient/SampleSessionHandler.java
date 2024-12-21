@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.agrona.DirectBuffer;
 import org.springframework.stereotype.Component;
 import uk.co.real_logic.artio.ValidationError;
+import uk.co.real_logic.artio.builder.Printer;
+import uk.co.real_logic.artio.decoder.PrinterImpl;
 import uk.co.real_logic.artio.dictionary.LongDictionary;
 import uk.co.real_logic.artio.fields.AsciiFieldFlyweight;
 import uk.co.real_logic.artio.library.OnMessageInfo;
@@ -44,6 +46,8 @@ public class SampleSessionHandler implements SessionHandler, OtfMessageAcceptor 
     private final OtfParser parser = new OtfParser(this, new LongDictionary());
     private final MutableAsciiBuffer latestTestRequestMessageBuffer = new MutableAsciiBuffer(new byte[8 * 1024]);
     private int latestTestRequestMessageLength = 0;
+    private final AsciiBuffer string = new MutableAsciiBuffer();
+    final Printer printer = new PrinterImpl();
 
     private String testReqId;
 
@@ -60,7 +64,8 @@ public class SampleSessionHandler implements SessionHandler, OtfMessageAcceptor 
             final OnMessageInfo messageInfo) {
         testReqId = null;
         parser.onMessage(buffer, offset, length);
-
+        string.wrap(buffer);
+        log.info("onMessage {}, {}", session.id(), printer.toString(string, offset, length, messageType));
         if (testReqId != null) {
             latestTestRequestMessageBuffer.putBytes(0, buffer, offset, length);
             latestTestRequestMessageLength = length;
@@ -76,6 +81,7 @@ public class SampleSessionHandler implements SessionHandler, OtfMessageAcceptor 
     }
 
     public Action onDisconnect(final int libraryId, final Session session, final DisconnectReason reason) {
+        log.info("onDisconnect {}, {}", session.id(), reason);
         return CONTINUE;
     }
 

@@ -28,7 +28,7 @@ public class FixAcceptorApplication {
 
     @EventListener
     public void handleFromApp(FromApp fromApp) {
-        log.info("fromAApp: Message={}, SessionId={}", fromApp.getMessage(), fromApp.getSessionId());
+        log.info("fromApp: Message={}, SessionId={}", fromApp.getMessage(), fromApp.getSessionId());
     }
 
     @EventListener
