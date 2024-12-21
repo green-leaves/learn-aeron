@@ -1,4 +1,4 @@
-package org.example.artioclient;
+package org.example.artioclient.spring;
 
 /*
  * Copyright 2015-2024 Real Logic Limited.
@@ -45,7 +45,6 @@ public class SampleSessionHandler implements SessionHandler, OtfMessageAcceptor 
 
     private final OtfParser parser = new OtfParser(this, new LongDictionary());
     private final MutableAsciiBuffer latestTestRequestMessageBuffer = new MutableAsciiBuffer(new byte[8 * 1024]);
-    private int latestTestRequestMessageLength = 0;
     private final AsciiBuffer string = new MutableAsciiBuffer();
     final Printer printer = new PrinterImpl();
 
@@ -65,11 +64,7 @@ public class SampleSessionHandler implements SessionHandler, OtfMessageAcceptor 
         testReqId = null;
         parser.onMessage(buffer, offset, length);
         string.wrap(buffer);
-        log.info("onMessage {}, {}", session.id(), printer.toString(string, offset, length, messageType));
-        if (testReqId != null) {
-            latestTestRequestMessageBuffer.putBytes(0, buffer, offset, length);
-            latestTestRequestMessageLength = length;
-        }
+        log.info("onMessage sessionId={}, {}", session.id(), printer.toString(string, offset, length, messageType));
 
         return CONTINUE;
     }
@@ -126,11 +121,4 @@ public class SampleSessionHandler implements SessionHandler, OtfMessageAcceptor 
         return false;
     }
 
-    public String getLatestMessage() {
-        return latestTestRequestMessageBuffer.getAscii(0, latestTestRequestMessageLength);
-    }
-
-    public String testReqId() {
-        return testReqId;
-    }
 }

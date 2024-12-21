@@ -2,9 +2,11 @@ target/
 logs-client/
 client-logs/
 aeron-client-logs/
+aeron-client-logs-from-agent/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.log
 
 
 ### IntelliJ IDEA ###
