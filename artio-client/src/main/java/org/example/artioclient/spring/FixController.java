@@ -12,17 +12,17 @@ import uk.co.real_logic.artio.builder.TradingSessionStatusEncoder;
 @RequestMapping("/fix")
 public class FixController {
 
-    private final SessionContext artioSession;
+    private final SessionContext artioSessionCtx;
 
     @GetMapping("/send")
     public String send(@RequestParam String message) {
 
         final TradingSessionStatusEncoder tradingStatus = new TradingSessionStatusEncoder();
-        tradingStatus.tradingSessionID("sessionId_" + artioSession.getSession().id());
-        tradingStatus.tradSesStatus(artioSession.getSession().state().value());
+        tradingStatus.tradingSessionID("sessionId_" + artioSessionCtx.getSession().id());
+        tradingStatus.tradSesStatus(artioSessionCtx.getSession().state().value());
         tradingStatus.text(message);
 
-        artioSession.getSession().trySend(tradingStatus);
+        artioSessionCtx.getSession().trySend(tradingStatus);
 
         return message;
     }

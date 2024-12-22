@@ -36,7 +36,6 @@ import uk.co.real_logic.artio.util.AsciiBuffer;
 import uk.co.real_logic.artio.util.MutableAsciiBuffer;
 
 import static io.aeron.logbuffer.ControlledFragmentHandler.Action.CONTINUE;
-import static uk.co.real_logic.artio.Constants.TEST_REQ_ID;
 
 @Component
 @Slf4j
@@ -44,11 +43,8 @@ public class SampleSessionHandler implements SessionHandler, OtfMessageAcceptor 
 
 
     private final OtfParser parser = new OtfParser(this, new LongDictionary());
-    private final MutableAsciiBuffer latestTestRequestMessageBuffer = new MutableAsciiBuffer(new byte[8 * 1024]);
     private final AsciiBuffer string = new MutableAsciiBuffer();
-    final Printer printer = new PrinterImpl();
-
-    private String testReqId;
+    private final Printer printer = new PrinterImpl();
 
     public Action onMessage(
             final DirectBuffer buffer,
@@ -61,7 +57,6 @@ public class SampleSessionHandler implements SessionHandler, OtfMessageAcceptor 
             final long timestampInNs,
             final long position,
             final OnMessageInfo messageInfo) {
-        testReqId = null;
         parser.onMessage(buffer, offset, length);
         string.wrap(buffer);
         log.info("onMessage sessionId={}, {}", session.id(), printer.toString(string, offset, length, messageType));
@@ -94,10 +89,6 @@ public class SampleSessionHandler implements SessionHandler, OtfMessageAcceptor 
     public MessageControl onField(final int tag, final AsciiBuffer buffer, final int offset, final int length) {
         String fieldMsg = buffer.getAscii(offset, length);
         log.info("onField: tag={}, value={}", tag, fieldMsg);
-        if (tag == TEST_REQ_ID) {
-            this.testReqId = fieldMsg;
-        }
-
         return MessageControl.CONTINUE;
     }
 

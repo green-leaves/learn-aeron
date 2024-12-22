@@ -15,6 +15,7 @@ import uk.co.real_logic.artio.engine.FixEngine;
 import uk.co.real_logic.artio.library.FixLibrary;
 import uk.co.real_logic.artio.library.LibraryConfiguration;
 import uk.co.real_logic.artio.library.SessionHandler;
+import uk.co.real_logic.artio.session.Session;
 
 import java.io.File;
 
@@ -22,7 +23,6 @@ import static io.aeron.CommonContext.IPC_CHANNEL;
 import static io.aeron.driver.ThreadingMode.SHARED;
 import static java.util.Collections.singletonList;
 import static org.example.artioclient.CommonConfigs.*;
-import static org.example.artioclient.CommonConfigs.AERON_DIR_NAME;
 
 @Slf4j
 @Getter
@@ -69,10 +69,13 @@ public class FixLibraryContext {
 
     @PreDestroy
     public void preDestroy() {
-        log.info("Shutting down FixLibrary");
+        log.info("Shutting down FixLibraryCtx");
+        this.fixLibrary.sessions().forEach(Session::logoutAndDisconnect);
+        this.fixLibrary.close();
         this.fixEngine.close();
         this.mediaDriver.close();
-        log.info("FixLibrary shut down fixEngineClosed={}", fixEngine.isClosed());
+        log.info("FixLibraryCtx shut down fixEngineClosed={}, fixLibraryClose={}",
+                fixEngine.isClosed(), fixLibrary.isClosed());
     }
 
 }

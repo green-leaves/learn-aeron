@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 public class FixMonitoringAgent implements Agent {
 
     private final FixLibraryContext libraryContext;
-    private final SessionContext artioSession;
+    private final SessionContext artioSessionCtx;
 
     @Override
     public int doWork() {
         int polled = libraryContext.getFixLibrary().poll(1);
-        if (!artioSession.getSession().isConnected()) {
-            log.info("Artio session is closed");
-            artioSession.reset();
+        if (!artioSessionCtx.getSession().isConnected()) {
+            log.info("Trying to reconnect session");
+            artioSessionCtx.reset();
             return polled + 1;
         }
         return polled;
@@ -26,6 +26,6 @@ public class FixMonitoringAgent implements Agent {
 
     @Override
     public String roleName() {
-        return "";
+        return "FixMonitoringAgent";
     }
 }

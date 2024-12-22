@@ -41,9 +41,11 @@ public class ArtioSpringApplication implements ApplicationRunner {
                 errorCounter,
                 fixMonitoringAgent);
 
-        Thread thread = AgentRunner.startOnThread(fixMonitoringAgentRunner);
+        Thread fixMonitoringThread = AgentRunner.startOnThread(fixMonitoringAgentRunner);
 
-        Thread.startVirtualThread(thread);
+        Thread.startVirtualThread(fixMonitoringThread);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(fixMonitoringThread::interrupt));
     }
 
 
