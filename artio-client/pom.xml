@@ -28,6 +28,13 @@
             <artifactId>artio-core</artifactId>
             <version>0.160</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.agrona</groupId>
+            <artifactId>agrona</artifactId>
+            <version>1.23.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>
