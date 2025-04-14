@@ -104,7 +104,7 @@ public class OrderBook {
         for (int i = 0; i < activeAskTargetRates.size(); i++) {
             long clientAskTargetRate = activeAskTargetRates.get(i);
             if (scaledMarketAsk <= clientAskTargetRate) {
-
+                processMatchOrder(clientAskTargetRate, triggeredOrderIds);
             } else {
                 break;
             }
