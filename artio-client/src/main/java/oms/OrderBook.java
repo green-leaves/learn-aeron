@@ -46,7 +46,7 @@ public class OrderBook {
         orderIdToIndexMap = new Long2LongHashMap(NOT_FOUND_VALUE);
     }
 
-    public boolean addOrder(long orderId, long clientId, double targetRate, boolean isBid) {
+    public boolean addOrder(long orderId, long clientId, double targetRate, byte side) {
         if (orderIdToIndexMap.containsKey(orderId)) {
             System.err.println("Order ID already exists: " + orderId);
             return false;
@@ -57,7 +57,6 @@ public class OrderBook {
         }
 
         int currentIdx = size;
-        byte side = isBid ? BID : ASK;
         long scaledRate = scaleRate(targetRate);
 
         this.orderIds[currentIdx] = orderId;

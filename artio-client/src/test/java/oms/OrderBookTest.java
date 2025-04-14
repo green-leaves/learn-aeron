@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.Locale;
 
+import static oms.TestUtils.generateRandomRate;
+
 public class OrderBookTest {
 
     private static final int NUMBER_OF_ORDERS = 2000;
@@ -14,7 +16,7 @@ public class OrderBookTest {
     private static final long NANO_PER_MILLI = 1_000_000L;
 
     @Test
-    public void test() {
+    public void testOrderBook() {
         long[] latencies = new long[NUMBER_OF_ORDERS];
         OrderBook orderBook = new OrderBook();
         for (int i = 0; i < NUMBER_OF_ORDERS; i++) {
@@ -23,9 +25,9 @@ public class OrderBookTest {
             long clientId = 5000L + (i % 100); // Cycle through some client IDs
             // Generate slightly varying rates to populate different levels
             double targetRate = generateRandomRate(1.35000);
-            boolean isBid = (i % 2 == 0); // Alternate sides
+            byte side = (byte) ((i % 2 == 0) ? 0 : 1); // Alternate sides
             long startTime = System.nanoTime();
-            boolean addResult = orderBook.addOrder(orderId, clientId, targetRate, isBid);
+            boolean addResult = orderBook.addOrder(orderId, clientId, targetRate, side);
             long endTime = System.nanoTime();
             latencies[i] = endTime - startTime;
 
@@ -46,9 +48,6 @@ public class OrderBookTest {
         System.out.println("-----------------------------------------------------");
     }
 
-    private double generateRandomRate(double base) {
-        return base + 0.000100 + (Math.random() * (0.000999 - 0.000100));
-    }
 
     private void processAndPrintLatencies(long[] latencies) {
         if (latencies == null || latencies.length == 0) {
