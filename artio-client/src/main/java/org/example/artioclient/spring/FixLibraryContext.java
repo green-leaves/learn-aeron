@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.agrona.IoUtil;
 import org.example.artioclient.SampleUtil;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import uk.co.real_logic.artio.engine.EngineConfiguration;
 import uk.co.real_logic.artio.engine.FixEngine;
@@ -23,6 +24,7 @@ import static io.aeron.CommonContext.IPC_CHANNEL;
 import static io.aeron.driver.ThreadingMode.SHARED;
 import static java.util.Collections.singletonList;
 import static org.example.artioclient.CommonConfigs.*;
+import static uk.co.real_logic.artio.CommonConfiguration.optimalTmpDirName;
 
 @Slf4j
 @Getter
@@ -33,8 +35,8 @@ public class FixLibraryContext {
     private final ArchivingMediaDriver mediaDriver;
     private final FixEngine fixEngine;
 
-    public FixLibraryContext(EngineConfiguration engineConfiguration,
-                             SessionHandler sampleSessionHandler) {
+
+    public FixLibraryContext(SessionHandler sampleSessionHandler) {
         // Static configuration lasts the duration of a FIX-Gateway instance
         final MediaDriver.Context context = new MediaDriver.Context()
                 .threadingMode(SHARED)
@@ -52,6 +54,7 @@ public class FixLibraryContext {
                 .replicationChannel(REPLICATION_CHANNEL)
                 .recordingEventsChannel(RECORDING_EVENTS_CHANNEL);
 
+        EngineConfiguration engineConfiguration = engineConfiguration();
         IoUtil.delete(new File(engineConfiguration.logFileDir()), true);
 
         this.mediaDriver = ArchivingMediaDriver.launch(context, archiveContext);
@@ -65,6 +68,22 @@ public class FixLibraryContext {
                 .aeronDirectoryName(AERON_DIR_NAME);
 
         this.fixLibrary = SampleUtil.blockingConnect(libraryConfiguration);
+    }
+
+    private EngineConfiguration engineConfiguration() {
+        try (EngineConfiguration configuration = new EngineConfiguration()
+                .libraryAeronChannel(IPC_CHANNEL)
+                .monitoringFile(optimalTmpDirName() + File.separator + "fix-client" + File.separator + "engineCounters")
+                .logFileDir("aeron-client-logs")) {
+            configuration.aeronArchiveContext()
+                    .aeronDirectoryName(AERON_DIR_NAME)
+                    .controlRequestChannel(CONTROL_REQUEST_CHANNEL)
+                    .controlResponseChannel(CONTROL_RESPONSE_CHANNEL);
+
+            configuration.aeronContext()
+                    .aeronDirectoryName(AERON_DIR_NAME);
+            return configuration;
+        }
     }
 
     @PreDestroy

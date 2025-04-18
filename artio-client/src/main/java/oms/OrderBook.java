@@ -1,5 +1,6 @@
 package oms;
 
+import lombok.extern.slf4j.Slf4j;
 import org.agrona.collections.*;
 
 import java.util.Arrays;
@@ -7,7 +8,7 @@ import java.util.Comparator;
 
 public class OrderBook {
 
-    private static final int INITIAL_CAPACITY = 1024;
+    private static final int INITIAL_CAPACITY = 4096;
     private static final long PRICE_SCALING_FACTOR = 1_000_000L;
     private static final long NOT_FOUND_VALUE = -1L;
     private static final byte BID = 0; // Client wants to BUY at target
@@ -118,6 +119,7 @@ public class OrderBook {
                  int orderIndex = indicesAtRate.getInt(i);
                  if (statuses[orderIndex] == STATUS_ACTIVE) {
                      triggeredOrderIds.add(orderIds[orderIndex]);
+                     statuses[orderIndex] = STATUS_TRIGGERED;
                  }
             }
         }

@@ -24,22 +24,6 @@ public class AppConfig {
 
     private static final SleepingIdleStrategy idleStrategy = new SleepingIdleStrategy(100);
 
-    @Bean
-    public EngineConfiguration engineConfiguration() {
-        try (EngineConfiguration configuration = new EngineConfiguration()
-                .libraryAeronChannel(IPC_CHANNEL)
-                .monitoringFile(optimalTmpDirName() + File.separator + "fix-client" + File.separator + "engineCounters")
-                .logFileDir("aeron-client-logs")) {
-            configuration.aeronArchiveContext()
-                    .aeronDirectoryName(AERON_DIR_NAME)
-                    .controlRequestChannel(CONTROL_REQUEST_CHANNEL)
-                    .controlResponseChannel(CONTROL_RESPONSE_CHANNEL);
-
-            configuration.aeronContext()
-                    .aeronDirectoryName(AERON_DIR_NAME);
-            return configuration;
-        }
-    }
 
     @Bean
     public Session sampleSession(FixLibraryContext libraryContext) {
