@@ -16,13 +16,8 @@ public class SequenceAgentRunner {
 
         final List<Agent> agents = new ArrayList<>();
 
-        // ***************************************************************
-        // *** THE FIX: Add Worker Agents FIRST, Main Agent LAST         ***
-        // ***************************************************************
-
         // 1. Create and add the worker agents
         for (int i = 0; i < numWorkerAgents; i++) {
-            // Let's add a log to the worker's doWork to see the order
             agents.add(new WorkerAgent(i, startLatch));
         }
 
@@ -30,7 +25,6 @@ public class SequenceAgentRunner {
         final Agent mainAgent = new MainAgent(startLatch);
         agents.add(mainAgent);
 
-        // The rest of the code is unchanged...
         final Agent compositeAgent = new CompositeAgent(agents);
 
         final AgentRunner runner = new AgentRunner(
